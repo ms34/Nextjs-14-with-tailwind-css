@@ -1,7 +1,7 @@
 import { getServerSession } from "next-auth";
 import WhoAmIButton from "./WhoAmIButton";
 
-export default function page() {
+export default function Page() {
     const whoAmI = async () => {
         'use server'
         const session = await getServerSession()

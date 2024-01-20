@@ -1,6 +1,6 @@
 import { headers } from "next/headers";
 
-export default async function page() {
+export default async function Page() {
   const res = await fetch("http://localhost:3000/api/whoAmI", 
   {
     method: 'GET', 

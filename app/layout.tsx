@@ -3,7 +3,6 @@ import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
 import { SessionProvider } from "./components/SessionProvider";
 import "./globals.css";
-import NavMenu from "./components/NavMenu";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -16,14 +15,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* <MyHeader /> */}
-        {/* <Header /> */}
-        <SessionProvider session={session}>
-          <main className="flex w-full px-12 ">
-            <NavMenu />
-            <div className="w-full">{children}</div>
-          </main>
-        </SessionProvider>
+        <SessionProvider session={session}>{children}</SessionProvider>
       </body>
     </html>
   );
