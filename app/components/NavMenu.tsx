@@ -61,8 +61,8 @@ export default function NavMenu() {
         {routesList.map(({ name, route, icon }, i) => (
           <Link key={i} href={route}>
             <li
-              className={`flex align-middle  capitalize mb-4 border px-4 h-14  items-center overflow-hidden text-nowrap border-gray-700 rounded-md ${
-                pathname === route ? "bg-blue-900" : ""
+              className={`flex align-middle  capitalize mb-4 border px-4 h-14  items-center overflow-hidden text-nowrap border-gray-700  rounded-md hover:bg-blue-950 ${
+                pathname === route ? "bg-blue-950 border-r-2 border-r-blue-400" : ""
               }`}
             >
               <span className="mr-2">{icon}</span>
