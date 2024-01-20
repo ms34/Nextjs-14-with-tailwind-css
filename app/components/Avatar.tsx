@@ -15,7 +15,7 @@ export function Avatar() {
             <div className="w-9 h-9 bg-gray-500 rounded-full overflow-hidden">
               <Image height={32} width={32} className="object-cover w-full h-full" src={session?.user?.image!} alt={"User"} />
             </div>
-            <div className="ml-4 text-left">
+            <div className="ml-4 text-left hidden md:block">
               <p className="font-bold text-base">{session?.user?.name}</p>
               <p className="text-gray-500 text-xs">{session?.user?.email}</p>
             </div>

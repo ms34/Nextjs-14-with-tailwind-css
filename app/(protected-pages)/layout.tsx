@@ -2,9 +2,8 @@ import type { Metadata } from "next";
 import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
 import { redirect } from "next/navigation";
-import { MyHeader } from "../components/MyHeader";
+import { ProtectedHeader } from "../components/ProtectedHeader";
 import NavMenu from "../components/NavMenu";
-import "../globals.css";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -16,14 +15,14 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   const session = await getServerSession();
 
   if (!session || !session.user) {
-    redirect(`/api/auth/signin?continueUrl=${encodeURI("/protected")}`);
+    redirect(`/api/auth/signin`);
   }
 
   return (
     <div className="flex">
       <NavMenu />
       <main className="w-full">
-        <MyHeader />
+        <ProtectedHeader />
         <div className="p-4">{children}</div>
       </main>
     </div>

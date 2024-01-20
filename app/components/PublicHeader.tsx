@@ -13,7 +13,7 @@ import {
 import Image from "next/image";
 import Link from "next/link";
 import { Fragment, useState } from "react";
-import { MyBrand } from "./MyHeader";
+import { MyBrand } from "./ProtectedHeader";
 import { classNames } from "../lib/utils";
 
 const products = [
@@ -50,12 +50,12 @@ const callsToAction = [
 
 
 
-export function Header() {
+export function PublicHeader() {
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
-    <header className="bg-white">
-      <nav className="mx-auto flex max-w-7xl items-center justify-between p-6 lg:px-8" aria-label="Global">
+    <header >
+      <nav className="mx-auto flex max-w-7xl items-center justify-between px-6 h-20 py-2 lg:px-8" aria-label="Global">
         <div className="flex lg:flex-1">
           <MyBrand />
         </div>
@@ -135,7 +135,7 @@ export function Header() {
           </a>
         </Popover.Group>
         <div className="hidden lg:flex lg:flex-1 lg:justify-end">
-          <Link href="/login" className="text-sm font-semibold leading-6 text-gray-900">
+          <Link href="/api/auth/signin" className="text-sm font-semibold leading-6 text-gray-900">
             Log in <span aria-hidden="true">&rarr;</span>
           </Link>
         </div>
@@ -212,7 +212,7 @@ export function Header() {
               </div>
               <div className="py-6">
                 <Link
-                  href="/login"
+                  href="/api/auth/signin"
                   className="-mx-3 block rounded-lg px-3 py-2.5 text-base font-semibold leading-7 text-gray-900 hover:bg-gray-50"
                 >
                   Log in
