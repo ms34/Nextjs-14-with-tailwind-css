@@ -1,17 +1,12 @@
-import { Component1 } from '@/components/Component1'
-import { Component2 } from '@/components/Component2'
-import { Component3 } from '@/components/Component3'
-import { Component4 } from '@/components/Component4'
-import { Component5 } from '@/components/Component5'
-import { Component6 } from '@/components/Component6'
-import React from 'react'
+import { getServerSession } from "next-auth";
+import { useSession } from "next-auth/react";
+import Image from "next/image";
 
-const Home = () => {
+export default async function Home() {
+  const session  = await getServerSession();
   return (
-    <div>
-      <Component1 />
-    </div>
-  )
+    <main className="flex min-h-screen flex-col items-center justify-between p-24">
+      {session?.user?.name ? <div>{session?.user?.name}</div> : <div>Not logged in</div>}
+    </main>
+  );
 }
-
-export default Home
