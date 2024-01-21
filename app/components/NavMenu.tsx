@@ -15,7 +15,7 @@ import {
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { createContext, useContext, useEffect, useState } from "react";
 import { classNames } from "../lib/utils";
 import { CustomScrollbars } from "./CustomScrollbars";
 import { MyBrand } from "./ProtectedHeader";
@@ -67,8 +67,16 @@ const menuWidthLarge = "w-64";
 const menuWidthSmall = "w-16";
 const menuItemHeight = "h-12";
 
+export const MenuContext = createContext<{
+  open: boolean;
+  activeParents: string[];
+  setActiveParents?: React.Dispatch<React.SetStateAction<string[]>>;
+}>({
+  open: false,
+  activeParents: [],
+});
+
 export default function NavMenu() {
-  const pathname = usePathname();
   const [open, setOpen] = useState(true);
   const [activeParents, setActiveParents] = useState<string[]>([]);
 
@@ -103,12 +111,9 @@ export default function NavMenu() {
         </div>
         <hr className="my-4 border-gray-700" />
         <CustomScrollbars autoHeightMax={"calc(100vh - 7rem)"}>
-          <Menu
-            activeParents={activeParents}
-            setActiveParents={setActiveParents}
-            items={routesList}
-            open={open}
-          />
+          <MenuContext.Provider value={{ open, activeParents, setActiveParents }}>
+            <Menu items={routesList} />
+          </MenuContext.Provider>
         </CustomScrollbars>
         <button
           onClick={() => setOpen(!open)}
@@ -121,80 +126,91 @@ export default function NavMenu() {
   );
 }
 
+const ListItemContext = createContext<{
+  item?: MenuItemProps;
+  setExpand?: React.Dispatch<React.SetStateAction<boolean>>;
+  expand?: boolean;
+  pl: string;
+  parents: string[];
+  group?: boolean;
+  active?: boolean;
+}>({ pl: "", parents: [] });
+
+
 const Menu: React.FC<{
   items: MenuItemProps[];
-  open: boolean;
-  tree?: number;
   parents?: string[];
-  activeParents?: string[];
-  setActiveParents?: React.Dispatch<React.SetStateAction<string[]>>;
-}> = ({ items, open,  activeParents, setActiveParents, parents = [], tree = 0 }) => {
-  const pathname = usePathname();
+}> = ({ items, parents = [] }) => {
   const [expand, setExpand] = useState(false);
-  const leftPadding = `pl-${tree * 4}`;
+  const pl = `pl-${parents.length * 4}`;
+  const pathname = usePathname();
+  const { activeParents } = useContext(MenuContext);
 
   return (
     <ul>
-      {items.map(({ children, name, route, icon }, i) => {
-        useEffect(() => {
-          if (pathname === route) {
-            if (setActiveParents) {
-              setActiveParents(parents);
-            }
-          }
-        }, [pathname]);
-        const active = pathname === route || activeParents?.includes(route)
-
-        return children ? (
-          <div key={i}>
-            <div onClick={() => setExpand(!expand)}>
-              <MenuItem
-                group
-                item={{ name, route, icon }}
-                leftPadding={leftPadding}
-                active={active!}
-                open={open}
-                expand={expand}
-              />
-            </div>
-
-            <div
-              className={classNames(
-                "bg-black overflow-hidden transition-max-h py-0",
-                expand ? " max-h-screen  duration-500 ease-in-out" : "max-h-0 duration-300 ease-custom py-0"
-              )}
-            >
-              <Menu
-                activeParents={activeParents}
-                setActiveParents={setActiveParents}
-                items={children}
-                open={open}
-                tree={tree + 1}
-                parents={[...parents, route]}
-              />
-            </div>
-          </div>
-        ) : (
-          <MenuItem
-            item={{ name, route, icon }}
-            leftPadding={leftPadding}
-            active={active!}
-            open={open}
-          />
-        );
-      })}
+      {items.map((item, i) => (
+        <ListItemContext.Provider
+          value={{
+            item,
+            pl,
+            parents,
+            group: !!item.children,
+            expand,
+            setExpand,
+            active: pathname === item.route || activeParents?.includes(item.route),
+          }}
+        >
+          <ListItem key={i} />
+        </ListItemContext.Provider>
+      ))}
     </ul>
   );
 };
 
-const MenuItem: React.FC<{
-  group?: boolean;
-  expand?: boolean;
-  leftPadding: string;
-  open: boolean;
-  active: boolean;
-  item: MenuItemProps;
-}> = ({ group, expand, leftPadding, open, active, item: { route, name, icon } }) => {
+const ListItem: React.FC = () => {
+  const { setActiveParents } = useContext(MenuContext);
+  const { item, parents, expand, setExpand } = useContext(ListItemContext);
+  const { route, children } = item!;
+  const pathname = usePathname();
+
+  useEffect(() => {
+    if (pathname === route) {
+      if (setActiveParents) {
+        setActiveParents(parents);
+      }
+    }
+  }, [pathname]);
+
+  return (
+    <>
+      {children ? (
+        <div>
+          <div onClick={() => setExpand && setExpand(!expand)}>
+            <MenuItem />
+          </div>
+
+          <div
+            className={classNames(
+              "bg-black overflow-hidden transition-max-h py-0",
+              expand ? " max-h-screen  duration-500 ease-in-out" : "max-h-0 duration-300 ease-custom py-0"
+            )}
+          >
+            <Menu items={children} parents={[...parents, route]} />
+          </div>
+        </div>
+      ) : (
+        <MenuItem />
+      )}
+    </>
+  );
+};
+
+const MenuItem: React.FC = () => {
+  const { open } = useContext(MenuContext);
+  const { pl, expand, item, active, group } = useContext(ListItemContext);
+
+  const { name, route, icon } = item!;
+
   return (
     <Link href={group ? "" : route}>
       <li
@@ -208,7 +224,7 @@ const MenuItem: React.FC<{
         <div
           className={classNames(
             "flex h-full items-center align-middle overflow-hidden",
-            open ? `mr-2 ${leftPadding}` : ""
+            open ? `mr-2 ${pl}` : ""
           )}
         >
           <div
