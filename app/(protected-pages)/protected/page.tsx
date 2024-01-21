@@ -1,57 +1,30 @@
-export default async function Page() {
-  const res: Integration[] = await fetch("https://api.vistar.cloud/api/v1/integrations/integration-list").then(
-    (res) => res.json()
-  );
+import IntegrationsList from "@/app/components/IntegrationsList";
+import IntegrationsListClientComponent from "@/app/components/IntegrationsListClientComponent";
+import Spin from "@/app/components/Spin";
+import { Suspense } from "react";
 
+export default async function Page() {
   return (
     <div>
       <h1>Protected page</h1>
       <br />
-      <ol>
-        {res?.map((r, i) => (
-          <li className="mb-5" key={i}>
-            {r?.name}
-          </li>
-        ))}
-      </ol>
+
+      <div className="flex justify-evenly">
+        {/* suspense for client components for in-app routing not first loading */}
+        <div>
+          <h1 className="text-blue-500 text-4xl font-bold">Client</h1>
+          <Suspense fallback={<h1 className="text-lg font-bold">Client component loading.....</h1>}>
+            <IntegrationsListClientComponent />
+          </Suspense>
+        </div>
+        {/* suspense work for server components when reload or at first render*/}
+        <div>
+          <h1 className="text-amber-500 text-4xl font-bold">Server</h1>
+          <Suspense fallback={<h2 className="text-lg font-bold">Server Component loading.....</h2>}>
+            <IntegrationsList />
+          </Suspense>
+        </div>
+      </div>
     </div>
   );
 }
-
-export type IntegrationRead = {
-  id?: string;
-  company: string;
-  name: string;
-  template_name?:
-    | "aws"
-    | "google"
-    | "office365"
-    | "gsuite"
-    | "slack"
-    | "github"
-    | "trello"
-    | "jira"
-    | "azure"
-    | "bitbucket";
-  metadata_json: object;
-  active?: boolean;
-  creator?: string;
-  modifier?: string;
-  created?: string;
-  modified?: string;
-};
-
-export type Integration = {
-  id: string;
-  created: string;
-  modified: string;
-  name: string;
-  note: string;
-  template_name: string;
-  category: string;
-  icon: any;
-  status: string;
-  total_test: number;
-  connected_accounts?: IntegrationRead[];
-  isConnected?: boolean;
-};

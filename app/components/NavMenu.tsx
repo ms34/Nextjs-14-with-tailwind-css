@@ -2,34 +2,76 @@
 import {
   Bars3Icon,
   ChatBubbleLeftEllipsisIcon,
+  ChevronDownIcon,
   ChevronLeftIcon,
+  ChevronUpIcon,
   CircleStackIcon,
   ExclamationCircleIcon,
   HomeIcon,
   PresentationChartBarIcon,
+  UserCircleIcon,
+  UsersIcon,
   XMarkIcon,
 } from "@heroicons/react/24/outline";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { classNames } from "../lib/utils";
+import { CustomScrollbars } from "./CustomScrollbars";
 import { MyBrand } from "./ProtectedHeader";
 
-const routesList = [
-  { name: "Dashboard", route: "/dashboard", icon: <HomeIcon className="h-6 w-6" /> },
+type MenuItemProps = {
+  name: string;
+  route: string;
+  icon?: JSX.Element;
+  children?: MenuItemProps[];
+};
+const routesList: MenuItemProps[] = [
+  { name: "Dashboard ddsss", route: "/dashboard", icon: <HomeIcon className="h-6 w-6" /> },
   { name: "Protected Page", route: "/protected", icon: <ExclamationCircleIcon className="h-6 w-6" /> },
   {
     name: "Server Action",
     route: "/serverAction",
     icon: <ChatBubbleLeftEllipsisIcon className="h-6 w-6" />,
   },
+  {
+    name: "My Projects",
+    icon: <UsersIcon className="h-6 w-6" />,
+    route: "/projects",
+    children: [
+      {
+        name: "Nextjs Projects",
+        icon: <UserCircleIcon className="h-6 w-6" />,
+        route: "/nextjs",
+        children: [
+          {
+            name: "Nextjs 13",
+            route: "/projects/nextjs/nextjs-13",
+            icon: <UserCircleIcon className="h-6 w-6" />,
+          },
+          {
+            name: "Nextjs 14",
+            route: "/projects/nextjs/nextjs-14",
+            icon: <UserCircleIcon className="h-6 w-6" />,
+          },
+        ],
+      },
+      { name: "Django Projects", route: "/projects/django", icon: <UserCircleIcon className="h-6 w-6" /> },
+    ],
+  },
   { name: "API From Client", route: "/apiFromClient", icon: <PresentationChartBarIcon className="h-6 w-6" /> },
   { name: "API From Server", route: "/apiFromServer", icon: <CircleStackIcon className="h-6 w-6" /> },
+  { name: "Users", route: "/users", icon: <UsersIcon className="h-6 w-6" /> },
 ];
+const menuWidthLarge = "w-64";
+const menuWidthSmall = "w-20";
+const menuItemHeight = "h-12";
 
 export default function NavMenu() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState(true);
+  const [activeParents, setActiveParents] = useState<string[]>([]);
+
   return (
     <>
       {/* backdrop screen */}
@@ -48,8 +90,8 @@ export default function NavMenu() {
 
       <div
         className={classNames(
-          "absolute lg:static z-50 flex flex-col justify-between bg-slate-950 shadow-lg h-screen pt-4 pr-1 text-white",
-          open ? "w-64" : "w-0 lg:w-16"
+          "absolute lg:static z-50 flex flex-col justify-between bg-slate-900 shadow-lg h-screen pt-4  text-white",
+          open ? `${menuWidthLarge} ml-0` : `w-0 -ml-1 lg:ml-0 lg:${menuWidthSmall} pr-0`
         )}
         style={{ transition: "ease-in-out .2s" }}
       >
@@ -59,21 +101,14 @@ export default function NavMenu() {
             <XMarkIcon className={classNames("h-6 w-6 text-slate-400", open ? "block lg:hidden" : "hidden")} />
           </button>
         </div>
-        <ul className="mt-8">
-          {routesList.map(({ name, route, icon }, i) => (
-            <Link key={i} href={route}>
-              <li
-                className={classNames(
-                  "flex align-middle  capitalize mb-4 border  h-14  items-center overflow-hidden text-nowrap border-gray-700  rounded-md hover:bg-slate-900",
-                  pathname === route ? "bg-blue-950 border-r-2 border-r-blue-400" : ""
-                )}
-              >
-                <span className="ml-4 ">{icon}</span>
-                {open && <span className="mt-1 mx-2">{name}</span>}
-              </li>
-            </Link>
-          ))}
-        </ul>
+        <CustomScrollbars autoHeightMax={"calc(100vh - 7rem)"}>
+          <Menu
+            activeParents={activeParents}
+            setActiveParents={setActiveParents}
+            items={routesList}
+            open={open}
+          />
+        </CustomScrollbars>
         <button
           onClick={() => setOpen(!open)}
           className="w-full py-2 justify-center flex bg-slate-900 mt-auto"
@@ -84,3 +119,131 @@ export default function NavMenu() {
     </>
   );
 }
+
+const Menu: React.FC<{
+  items: MenuItemProps[];
+  open: boolean;
+  tree?: number;
+  parents?: string[];
+  group?: boolean;
+  activeParents?: string[];
+  setActiveParents?: React.Dispatch<React.SetStateAction<string[]>>;
+}> = ({ items, open, group, activeParents, setActiveParents, parents = [], tree = 0 }) => {
+  const pathname = usePathname();
+  const [expand, setExpand] = useState(false);
+  const leftPadding = `pl-${tree * 4}`;
+
+  return (
+    <ul>
+      {items.map(({ children, name, route, icon }, i) => {
+        useEffect(() => {
+          if (pathname === route) {
+            if (setActiveParents) {
+              setActiveParents(parents);
+            }
+          }
+        }, [pathname]);
+        const active = pathname === route || activeParents?.includes(route)
+
+        return children ? (
+          <div key={i}>
+            <div onClick={() => setExpand(!expand)}>
+              <MenuItem
+                group
+                item={{ name, route, icon }}
+                leftPadding={leftPadding}
+                active={active!}
+                open={open}
+                expand={expand}
+              />
+            </div>
+
+            <div
+              className={classNames(
+                "bg-black overflow-hidden transition-max-h py-0",
+                expand ? " max-h-screen  duration-500 ease-in-out" : "max-h-0 duration-300 ease-custom py-0"
+              )}
+              // style={
+              //   expand
+              //     ? {
+              //         maxHeight: "100vh",
+              //         transition: "max-height 1s ease-in-out",
+              //       }
+              //     : {
+              //         maxHeight: "0px",
+              //         transition: "max-height 0.5s cubic-bezier(0, 1, 0, 1)",
+              //       }
+              // }
+            >
+              <Menu
+                activeParents={activeParents}
+                setActiveParents={setActiveParents}
+                items={children}
+                open={open}
+                tree={tree + 1}
+                parents={[...parents, route]}
+              />
+            </div>
+          </div>
+        ) : (
+          <MenuItem
+            item={{ name, route, icon }}
+            leftPadding={leftPadding}
+            active={active!}
+            open={open}
+          />
+        );
+      })}
+    </ul>
+  );
+};
+
+const MenuItem: React.FC<{
+  group?: boolean;
+  expand?: boolean;
+  leftPadding: string;
+  open: boolean;
+  active: boolean;
+  item: MenuItemProps;
+}> = ({ group, expand, leftPadding, open, active, item: { route, name, icon } }) => {
+  return (
+    <Link href={group ? "" : route}>
+      <li
+        className={classNames(
+          "flex items-center justify-between  text-sm text-gray-400  capitalize   py-2  text-nowrap ",
+          " border-gray-800  rounded-sm hover:bg-blue-950 hover:bg-opacity-50 ",
+          active ? (group ? "text-gray-50" : "bg-blue-950 border-r-2 border-r-blue-40 text-gray-50") : "",
+          open ? menuItemHeight : "border-y"
+        )}
+      >
+        <div
+          className={classNames(
+            "flex h-full items-center align-middle overflow-hidden",
+            open ? `mr-2 ${leftPadding}` : ""
+          )}
+        >
+          <div
+            className={classNames(
+              "text-center flex flex-col justify-center items-center",
+              open ? "" : `${menuWidthSmall} py-2 px-1`
+            )}
+          >
+            <span className="px-3">{icon}</span>
+            {!open && (
+              <span className="mt-1 text-wrap " style={{ fontSize: 9 }}>
+                {name}
+              </span>
+            )}
+          </div>
+          {open && <span className="mt-1">{name}</span>}
+        </div>
+        {group &&
+          (expand ? (
+            <ChevronUpIcon className={classNames("h-4 w-4 mr-2")} />
+          ) : (
+            <ChevronDownIcon className={classNames("h-4 w-4 mr-2")} />
+          ))}
+      </li>
+    </Link>
+  );
+};

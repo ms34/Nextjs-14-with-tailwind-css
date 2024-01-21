@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { redirect } from "next/navigation";
 import { ProtectedHeader } from "../components/ProtectedHeader";
 import NavMenu from "../components/NavMenu";
+import { navHeight } from "../lib/styles";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -21,9 +22,9 @@ export default async function ProtectedLayout({ children }: { children: React.Re
   return (
     <div className="flex">
       <NavMenu />
-      <main className="w-full">
+      <main className="w-screen h-scree overflow-hidden">
         <ProtectedHeader />
-        <div className="p-4">{children}</div>
+        <div className={`p-4  h-[calc(100vh-3.5rem)] overflow-auto`}>{children}</div>
       </main>
     </div>
   );
