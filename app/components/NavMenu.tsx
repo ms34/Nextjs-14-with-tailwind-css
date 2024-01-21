@@ -126,10 +126,9 @@ const Menu: React.FC<{
   open: boolean;
   tree?: number;
   parents?: string[];
-  group?: boolean;
   activeParents?: string[];
   setActiveParents?: React.Dispatch<React.SetStateAction<string[]>>;
-}> = ({ items, open, group, activeParents, setActiveParents, parents = [], tree = 0 }) => {
+}> = ({ items, open,  activeParents, setActiveParents, parents = [], tree = 0 }) => {
   const pathname = usePathname();
   const [expand, setExpand] = useState(false);
   const leftPadding = `pl-${tree * 4}`;
