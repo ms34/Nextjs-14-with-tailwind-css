@@ -3,6 +3,7 @@ import { getServerSession } from "next-auth";
 import { Inter } from "next/font/google";
 import { SessionProvider } from "./components/SessionProvider";
 import "./globals.css";
+import AppContextProvider from "./components/AppContextProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -15,7 +16,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   return (
     <html lang="en">
       <body className={inter.className}>
-        <SessionProvider session={session}>{children}</SessionProvider>
+        <SessionProvider session={session}>
+          <AppContextProvider>{children}</AppContextProvider>
+        </SessionProvider>
       </body>
     </html>
   );
