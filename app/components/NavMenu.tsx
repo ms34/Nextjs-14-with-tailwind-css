@@ -64,7 +64,7 @@ const routesList: MenuItemProps[] = [
   { name: "Users", route: "/users", icon: <UsersIcon className="h-6 w-6" /> },
 ];
 const menuWidthLarge = "w-64";
-const menuWidthSmall = "w-20";
+const menuWidthSmall = "w-16";
 const menuItemHeight = "h-12";
 
 export default function NavMenu() {
@@ -101,6 +101,7 @@ export default function NavMenu() {
             <XMarkIcon className={classNames("h-6 w-6 text-slate-400", open ? "block lg:hidden" : "hidden")} />
           </button>
         </div>
+        <hr className="my-4 border-gray-700" />
         <CustomScrollbars autoHeightMax={"calc(100vh - 7rem)"}>
           <Menu
             activeParents={activeParents}
@@ -163,17 +164,6 @@ const Menu: React.FC<{
                 "bg-black overflow-hidden transition-max-h py-0",
                 expand ? " max-h-screen  duration-500 ease-in-out" : "max-h-0 duration-300 ease-custom py-0"
               )}
-              // style={
-              //   expand
-              //     ? {
-              //         maxHeight: "100vh",
-              //         transition: "max-height 1s ease-in-out",
-              //       }
-              //     : {
-              //         maxHeight: "0px",
-              //         transition: "max-height 0.5s cubic-bezier(0, 1, 0, 1)",
-              //       }
-              // }
             >
               <Menu
                 activeParents={activeParents}
@@ -212,8 +202,8 @@ const MenuItem: React.FC<{
         className={classNames(
           "flex items-center justify-between  text-sm text-gray-400  capitalize   py-2  text-nowrap ",
           " border-gray-800  rounded-sm hover:bg-blue-950 hover:bg-opacity-50 ",
-          active ? (group ? "text-gray-50" : "bg-blue-950 border-r-2 border-r-blue-40 text-gray-50") : "",
-          open ? menuItemHeight : "border-y"
+          active ? (group ? "text-blue-500" : "bg-blue-950 border-r-2 border-r-blue-40 text-blue-500") : "",
+          open ? menuItemHeight + " my-1" : "border-y"
         )}
       >
         <div
