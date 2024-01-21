@@ -29,10 +29,10 @@ const routesList = [
 
 export default function NavMenu() {
   const pathname = usePathname();
-  const [open, setOpen] = useState(window.innerWidth >= 1024);  
+  const [open, setOpen] = useState(false);
   return (
     <>
-    {/* backdrop screen */}
+      {/* backdrop screen */}
       <div
         onClick={() => setOpen(false)}
         className={classNames(
@@ -45,7 +45,7 @@ export default function NavMenu() {
           <Bars3Icon className="h-8 w-8" />
         </button>
       )}
-      
+
       <div
         className={classNames(
           "absolute lg:static z-50 flex flex-col justify-between bg-slate-950 shadow-lg h-screen pt-4 pr-1 text-white",
@@ -56,7 +56,7 @@ export default function NavMenu() {
         <div className={classNames("mx-3 flex justify-between items-center", open ? "" : "hidden lg:flex")}>
           <MyBrand onlyLogo={!open} />
           <button onClick={() => setOpen(false)}>
-            <XMarkIcon className={classNames("h-6 w-6 text-slate-400", open ? "block" : "hidden")} />
+            <XMarkIcon className={classNames("h-6 w-6 text-slate-400", open ? "block lg:hidden" : "hidden")} />
           </button>
         </div>
         <ul className="mt-8">

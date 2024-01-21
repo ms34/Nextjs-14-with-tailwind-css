@@ -1,4 +1,4 @@
-import { envConfig } from "@/env.config";
+import { envConfig } from "@/app/env.config";
 import GitHubProvider from "next-auth/providers/github";
 import GoogleProvider from "next-auth/providers/google";
 
