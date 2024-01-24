@@ -1,16 +1,31 @@
+import axios from "axios";
+import { vistarEndpoints } from "../lib/store/auto-generated/vistarEndpoints";
 export default async function IntegrationsList() {
-  const res: Integration[] = await fetch("https://api.vistar.cloud/api/v1/integrations/integration-list").then(
-    (res) => res.json()
-  );
+  // const res: Integration[] = await fetch("").then(
+  //   (res) => res.json()
+  // ).catch(res => console.log('error fetching integrations'))
+
+  const url = "https://api.vistar.cloud/api/v1/integrations/integration-list";
+  const res = await axios
+    .get<Integration[]>(url)
+    .then((res) => res.data)
+    .catch((err) => {
+      console.log(err.message);
+    });
+
+    // const { data: order } = await store.dispatch(
+    //     vistarEndpoints.endpoints.getIntegrationsIntegrationList.initiate()
+    // ); 
 
   return (
     <div>
       <ul className="text-black">
-        {res?.map((r, i) => (
-          <li className="mb-5" key={i}>
-            {r?.name}
-          </li>
-        ))}
+        {!!res &&
+          res?.map((r, i) => (
+            <li className="mb-5" key={i}>
+              {r?.name}
+            </li>
+          ))}
       </ul>
     </div>
   );

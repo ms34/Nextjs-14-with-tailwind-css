@@ -2,8 +2,15 @@
 
 import { AppContext } from "@/app/components/AppContextProvider";
 import { useContext, useEffect, useState } from "react";
+import { useSelector, useDispatch } from '@/app/lib/store';
+import { getResources } from '@/app/lib/store/slices/mainSlice';
 
 export default function Page() {
+  // Initialize useDispatch to dispatch Redux actions
+  const dispatch = useDispatch();
+  // Select the 'cardDetails' data from the Redux store using useSelector
+  const { cardDetails } = useSelector((state) => state.cards);
+  
   const [name, setName] = useState<string>();
   const { darkMode, setDarkMode } = useContext(AppContext)!;
   console.log({ darkMode });

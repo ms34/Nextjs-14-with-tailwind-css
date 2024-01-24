@@ -60,12 +60,15 @@ const routesList: MenuItemProps[] = [
     ],
   },
   { name: "API From Client", route: "/apiFromClient", icon: <PresentationChartBarIcon className="h-6 w-6" /> },
+  { name: "client-with-rtk", route: "/client-with-rtk", icon: <PresentationChartBarIcon className="h-6 w-6" /> },
   { name: "API From Server", route: "/apiFromServer", icon: <CircleStackIcon className="h-6 w-6" /> },
   { name: "Users", route: "/users", icon: <UsersIcon className="h-6 w-6" /> },
 ];
 const menuWidthLarge = "w-64";
 const menuWidthSmall = "w-16";
 const menuItemHeight = "h-12";
+
+const closeWidth = `w-0 lg:w-16`
 
 export const MenuContext = createContext<{
   open: boolean;
@@ -77,7 +80,7 @@ export const MenuContext = createContext<{
 });
 
 export default function NavMenu() {
-  const [open, setOpen] = useState(true);
+  const [open, setOpen] = useState(false);
   const [activeParents, setActiveParents] = useState<string[]>([]);
 
   return (
@@ -99,7 +102,7 @@ export default function NavMenu() {
       <div
         className={classNames(
           "absolute lg:static z-50 flex flex-col justify-between bg-slate-900 shadow-lg h-screen pt-4  text-white",
-          open ? `${menuWidthLarge} ml-0` : `w-0 -ml-1 lg:ml-0 lg:${menuWidthSmall} pr-0`
+          open ? `${menuWidthLarge} ml-0` : `${closeWidth} -ml-1 lg:ml-0  pr-0`
         )}
         style={{ transition: "ease-in-out .2s" }}
       >
@@ -136,7 +139,6 @@ const ListItemContext = createContext<{
   active?: boolean;
 }>({ pl: "", parents: [] });
 
-
 const Menu: React.FC<{
   items: MenuItemProps[];
   parents?: string[];
@@ -150,6 +152,7 @@ const Menu: React.FC<{
     <ul>
       {items.map((item, i) => (
         <ListItemContext.Provider
+          key={i}
           value={{
             item,
             pl,

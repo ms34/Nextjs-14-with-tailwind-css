@@ -4,6 +4,7 @@ import { Inter } from "next/font/google";
 import { SessionProvider } from "./components/SessionProvider";
 import "./globals.css";
 import AppContextProvider from "./components/AppContextProvider";
+import { StoreProvider } from "./lib/store/StoreProvider";
 const inter = Inter({ subsets: ["latin"] });
 
 export const metadata: Metadata = {
@@ -17,7 +18,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     <html lang="en">
       <body className={inter.className}>
         <SessionProvider session={session}>
-          <AppContextProvider>{children}</AppContextProvider>
+         <StoreProvider>
+           <AppContextProvider>{children}</AppContextProvider>
+         </StoreProvider>
         </SessionProvider>
       </body>
     </html>

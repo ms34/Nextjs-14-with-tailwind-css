@@ -1,0 +1,12 @@
+{
+  "schemaFile": "./swagger.json",
+  "apiFile": "../services/api.ts",
+  "apiImport": "api",
+  "outputFile": "./vistarEndpoints.ts",
+  "exportName": "vistarEndpoints",
+  "hooks": {
+    "queries": true,
+    "lazyQueries": true,
+    "mutations": true
+  }
+}
